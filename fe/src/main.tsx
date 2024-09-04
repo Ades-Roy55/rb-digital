@@ -6,14 +6,14 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import BgVideo from "./Compenent/BgVideo.tsx";
 import Login from "./Login.tsx";
 import Books from "./Pages/Books.tsx";
-import Signup from "./Signup.tsx";
 import Collection from "./Pages/Collection.tsx";
 import Profile from "./Pages/Profile.tsx";
+import Register from "./Register.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Signup />,
+    element: <Register />,
   },
   {
     path: "/login",

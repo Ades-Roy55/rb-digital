@@ -1,73 +1,107 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { api } from "./util";
+
+interface SignInResponse {
+  token: string;
+}
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token); 
-        navigate("/home");
-      } else {
-        console.error("Login failed");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    api
+      .post<SignInResponse>(
+        `/auth/sign-in?email=${email}&password=${password}`,
+        {
+          email,
+          password,
+        }
+      )
+      .then((response) => {
+        location.reload();
+        alert("Login Berhasil");
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("email", email);
+        location.href = "/home";
+      })
+      .catch(() => {
+        alert("Email atau password salah");
+      });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-              Email
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-blue-500 to-indigo-600">
+      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md transition-transform transform hover:scale-105 duration-300">
+        <h2 className="text-4xl font-bold text-center mb-6 text-gray-900">
+          Selamat Datang Kembali!
+        </h2>
+        <p className="text-center text-gray-600 mb-8">
+          Login Terlebih Dahulu
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          {/* Input Email */}
+          <div className="mb-6">
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="email"
+            >
+              Alamat email
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              id="email"
               type="email"
-              placeholder="Enter your email"
+              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Alamat email"
+              required
             />
           </div>
+
+          {/* Input Password */}
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Kata sandi"
+                required
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-3 cursor-pointer text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                {showPassword ? "😎" : "👁️"}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <button
-              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-              type="submit"
-            >
-              Login
-            </button>
+
+          <div className="text-right mb-6">
+            <a href="#" className="text-indigo-500 text-sm hover:underline">
+              Lupa kata sandi?
+            </a>
           </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300"
+          >
+            MASUK
+          </button>
         </form>
       </div>
     </div>
