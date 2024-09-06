@@ -9,6 +9,11 @@ import lombok.Data;
 @Entity
 @Data
 public class Buku {
+    public Buku() {
+    }
+    public Buku(Long id) {
+        this.id=id;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Koleksi } from "./Collection";
+import Cookies from "js-cookie";
 
 export interface Book {
   id: number;
@@ -17,9 +19,19 @@ export default function Books() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [showFullStory, setShowFullStory] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [koleksi, setKoleksi] = useState<Koleksi[]>([]);
+  const [newBookId, setNewBookId] = useState<number | null>(null);
+
+  const autorhiz: RequestInit = {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      Authorization: ("Bearer " + Cookies.get("token")) as string,
+    },
+  };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/buku")
+    fetch("http://localhost:8080/api/buku", autorhiz)
       .then((response) => response.json())
       .then((books) => {
         setBooks(books);
@@ -42,9 +54,7 @@ export default function Books() {
 
   const filterAndSortBooks = (term: string, order: "asc" | "desc") => {
     const filtered = books
-      .filter((book) =>
-        book.tittle.toLowerCase().includes(term.toLowerCase())
-      )
+      .filter((book) => book.tittle.toLowerCase().includes(term.toLowerCase()))
       .sort((a, b) => {
         if (order === "asc") {
           return a.tittle.localeCompare(b.tittle);
@@ -68,6 +78,35 @@ export default function Books() {
     setShowFullStory(!showFullStory);
   };
 
+  const addKoleksi = (books: Book) => {
+    // if (newBookId === null) {
+    // alert("Please enter a valid book ID.");
+    fetch("http://localhost:8080/api/koleksi/" + books.id, {
+      method: "POST",
+    }).then((res) => console.log(res));
+    return;
+    // }
+
+    return;
+    const newKoleksi = {
+      id_buku: newBookId,
+    };
+
+    fetch("http://localhost:8080/api/koleksi", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newKoleksi),
+    })
+      .then((response) => response.json())
+      .then((addedKoleksi) => {
+        setKoleksi([...koleksi, addedKoleksi]);
+        setNewBookId(null);
+        alert("Koleksi added successfully!");
+      })
+      .catch((error) => console.error("Error adding koleksi", error));
+  };
   return (
     <div>
       <h1 className="text-center text-2xl font-bold mb-6">RB-Collection</h1>
@@ -120,12 +159,20 @@ export default function Books() {
                 className="w-1/3 h-auto object-cover mr-4"
               />
               <div className="flex flex-col w-2/3">
-                <h2 className="text-3xl font-semibold mb-4">{selectedBook.tittle}</h2>
-                <p className="text-gray-700 mb-2">Penulis: {selectedBook.penulis}</p>
-                <p className="text-gray-600 mb-2">Genre: {selectedBook.genre}</p>
+                <h2 className="text-3xl font-semibold mb-4">
+                  {selectedBook.tittle}
+                </h2>
+                <p className="text-gray-700 mb-2">
+                  Penulis: {selectedBook.penulis}
+                </p>
+                <p className="text-gray-600 mb-2">
+                  Genre: {selectedBook.genre}
+                </p>
                 {!showFullStory ? (
                   <>
-                    <p className="text-gray-800 mb-4">Sinopsis: {selectedBook.sinopsis}</p>
+                    <p className="text-gray-800 mb-4">
+                      Sinopsis: {selectedBook.sinopsis}
+                    </p>
                     <button
                       onClick={handleToggleStory}
                       className="text-blue-500 hover:underline self-start"
@@ -142,12 +189,17 @@ export default function Books() {
                       Kembali
                     </button>
                     <div className="overflow-y-auto h-[60vh]">
-                      <p className="text-gray-800">
-                        {selectedBook.isiCerita}
-                      </p>
+                      <p className="text-gray-800">{selectedBook.isiCerita}</p>
                     </div>
                   </>
                 )}
+                {/* Add Save button here */}
+                <button
+                  onClick={() => addKoleksi(selectedBook)}
+                  className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+                >
+                  Simpan
+                </button>
               </div>
             </div>
           </div>

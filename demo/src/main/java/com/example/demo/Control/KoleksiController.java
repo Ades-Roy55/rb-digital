@@ -7,33 +7,35 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Model.Buku;
-import com.example.demo.Repository.BukuRepository;
+import com.example.demo.Model.Koleksi;
+import com.example.demo.Repository.KoleksiRepository;
 
-@RequestMapping("/api/buku")
-@RestController
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true", allowPrivateNetwork = "true")
-public class BukuController {
+@RequestMapping("/api/koleksi")
+@RestController
+public class KoleksiController {
     @Autowired
-    private BukuRepository bukuRepository;
+    private KoleksiRepository koleksiRepository;
 
     @RequestMapping()
-    public List<Buku> getAll(){
-        return bukuRepository.findAll();
+    public List<Koleksi> getAll(){
+        return koleksiRepository.findAll();
     }
 
-    @PostMapping
-    public Buku creat(@RequestBody Buku buku){
-        return bukuRepository.save(buku);
+    
+
+    @PostMapping("{id}")
+    public Koleksi creat(@PathVariable Long id){
+        return koleksiRepository.save(new Koleksi(new Buku(id)));
     }
 
     @DeleteMapping("{id}")
     public String deleteById(@PathVariable Long id){
-        bukuRepository.deleteById(id);
+        koleksiRepository.deleteById(id);
         return "Item berhasil terhapus";
     }
 }

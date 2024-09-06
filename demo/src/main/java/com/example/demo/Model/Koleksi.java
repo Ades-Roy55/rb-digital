@@ -11,6 +11,14 @@ import lombok.Data;
 @Entity
 @Data
 public class Koleksi {
+
+    public Koleksi() {
+    }
+
+    public Koleksi(Buku buku) {
+        this.buku = buku;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

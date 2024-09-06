@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.Model.Stori;
 import com.example.demo.Repository.StoriRepository;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true", allowPrivateNetwork = "true")
 @RequestMapping("/api/stori")
 @RestController
 public class StoriController {

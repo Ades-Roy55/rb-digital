@@ -8,7 +8,9 @@ export interface Stori {
   isiCerita: string;
   cover: string;
   tglPublis: Date;
-  id_user: number;
+  user:{
+    username: string;
+  }
 }
 
 export default function Profil() {
@@ -103,7 +105,7 @@ export default function Profil() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Story Profile</h1>
+      <h1 className="text-3xl font-bold mb-4 text-center">Profile</h1>
       <div className="mb-4 flex justify-end">
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -113,7 +115,7 @@ export default function Profil() {
             setIsModalOpen(true);
           }}
         >
-          Add Story
+          Add Your Story
         </button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

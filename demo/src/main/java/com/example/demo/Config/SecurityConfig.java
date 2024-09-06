@@ -22,8 +22,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> {
                     auth.requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated();
                     auth.requestMatchers(HttpMethod.GET, "/api/auth/sign-out").authenticated();
-
-                    auth.requestMatchers(HttpMethod.GET, "/api/planets").authenticated();
+                    auth.requestMatchers(HttpMethod.GET, "/api/buku").authenticated();
+                    // auth.requestMatchers(HttpMethod.GET, "/api/planets").authenticated();
 
                     auth.anyRequest().permitAll();
                 })
